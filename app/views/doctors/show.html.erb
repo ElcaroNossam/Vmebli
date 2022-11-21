@@ -1,0 +1,65 @@
+
+<h1 class="text-center mt-4"><%= @doctor.name %>'s profile</h1>
+
+    <%= gravatar_for @doctor, size: 200 %>
+
+
+    <div class="text-center mt-4">
+    <% if current_doctor == @doctor || current_user && current_user.has_role?(:admin) %>
+        <%= link_to "Edit this profile", edit_doctor_path(@doctor), class: "btn btn-outline-info" %>
+        <% end %>
+    <% if current_user && current_user.has_role?(:admin) %>
+        <%= link_to "Delete user", doctor_path(@doctor), class: "btn btn-outline-danger", method: :delete,
+        data: {confirm: "Are you sure you want to delete the user account and all associated articles?"} %>
+    <% end  %>
+        </div>
+<% if @doctor.categories.count > 0 %>
+<div class="container">
+<h3 class="text-center mt-4">Категории:</h3>
+<div class="row justify-content-md-center">
+    <div class="col-8 mt-4">
+      <div class="card text-center shadow mb-5 bg-white rounded">
+       <div class="row justify-content-center" >
+      
+        <%= render @categories %>
+       </div>
+      </div>
+    </div>
+   </div>
+ </div>
+ <% end %>
+
+<div class="row justify-content-center mt-5 mb-5" >
+  <% if  user_signed_in? && current_user && @doctor.recomend?.count > 2 %> 
+    <td> <span class="btn btn-danger text-warning">
+       Свободных запесей нет! 
+      </span></td> 
+  <% elsif  user_signed_in? && current_user %>
+    <td> <span class="btn btn-success">   
+     
+        <%= link_to "Вы можете записатся на любое время!",  new_appointment_path, class: "text-dark"  %>   
+      </span></td> 
+  <% end %>
+</div>
+
+<div class="row justify-content-center mt-5 mb-5" >
+  <% if  doctor_signed_in? && current_doctor && @doctor.recomend?.count > 2 %> 
+    <td> <span class="btn btn-danger text-warning">
+       Свободных запесей нет! 
+    </span></td> 
+  <% elsif  doctor_signed_in? && current_doctor %>
+    <td> <span class="btn btn-success">
+    <%= link_to "Есть свободные записи!", class: "text-dark"  %>
+      </span></td> 
+   <% end %>
+</div>
+
+<% if @doctor.appointments.count > 0 %>
+    <% if user_signed_in? && current_user || current_doctor == @doctor  %>
+        <div class="container">
+            <h3 class="text-center mt-4">Записи:</h3>
+            <%= render 'appointments/appointment' %>
+        </div>
+    <% end %>
+<% end %>
+
